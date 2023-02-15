@@ -4,7 +4,7 @@ AWS Lambda Function to Download the file from s3, extract the file name in the t
 
 1. Lambda Env Variables :
 
-BUCKET_NAME	- xtb-test-bucket
+BUCKET_NAME	-  test-bucket
 EFS_MOUNT	-   /mnt/efs
 TEMP_DIR	-   /tmp
 
@@ -36,7 +36,7 @@ TEMP_DIR	-   /tmp
         "s3SchemaVersion": "1.0",
         "configurationId": "testConfigRule",
         "bucket": {
-          "name": "xtb-test-bucket",
+          "name": "test-bucket",
           "ownerIdentity": {
             "principalId": "EXAMPLE"
           },
