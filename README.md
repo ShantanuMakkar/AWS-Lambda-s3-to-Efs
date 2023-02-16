@@ -1,5 +1,5 @@
 # AWS-Lambda-s3-to-Efs
-AWS Lambda Function to Download the file from s3, extract the file name in the temp directory of Lambda, and copy the file to EFS File System.
+AWS Lambda Function in Python 3.9 to download the zip file from s3, extract the file name in the temp directory of Lambda, unzip it and copy the file to EFS File System.
 
 
 1. Lambda Env Variables :
