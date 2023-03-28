@@ -6,13 +6,15 @@ import zipfile
 import boto3
 from io import BytesIO
 from pathlib import Path
+from datetime import datetime
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+global dt
+dt = datetime.now()
 
 s3 = boto3.client("s3")
 
-#Defining Variables
 BUCKET_NAME = os.getenv("BUCKET_NAME")
 EFS_MOUNT = os.getenv("EFS_MOUNT")
 TEMP_DIR = os.getenv("TEMP_DIR")
@@ -27,7 +29,6 @@ class c:
         global key
         print("Extracting the uploaded file name from the s3 Bucket ..")
         
-        #Extract Bucket and Object Name
         bucket = event['Records'][0]['s3']['bucket']['name']
         key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
         response = s3.get_object(Bucket=bucket, Key=key)
@@ -44,11 +45,9 @@ class c:
         print(" ------------------------------------- ")
         print("File name recieved, starting the file download to lambda temp folder ..")
         
-        #Defining Variables
         s3_file_path = key
         local_temp_file = f"{TEMP_DIR}/{key}"
         
-        #Converting local temp file set to string, and retrieving the file name without extension
         s = str({local_temp_file})
         fname = Path(s).resolve().stem
         print("File name without extension :",fname)
@@ -60,7 +59,6 @@ class c:
         efs_unzip_folder = f"{EFS_MOUNT}/unzipped_files/"
         
         
-        #Downloading file to Lambda /tmp folder
         os.makedirs(TEMP_DIR, exist_ok=True)
         with open(local_temp_file, "wb") as f:
             s3.download_fileobj(BUCKET_NAME, s3_file_path, f)
@@ -91,7 +89,7 @@ class c:
         print(os.system(f"ls -la {efs_unzip_folder}"))
         
         print(" ------------------------------------- ")
-        print("Files are copied to the EFS File system, Process is complete ..!")
+        print("[SUCCESS]", dt, "Files are copied to the EFS File system, Process is complete ..!")
         print(" ------------------------------------- ")
 
         return {"statusCode": 200}  
