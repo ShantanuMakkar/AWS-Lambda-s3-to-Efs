@@ -10,8 +10,16 @@ from datetime import datetime
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
+
 global dt
+global key
+global File_PREFIX_DATE
+global FILE_NAME
+
 dt = datetime.now()
+File_PREFIX_DATE = dt.strftime('%d%m%Y')
+FILE_SUFFIX = os.getenv("file_suffix")
+FILE_PREFIX = os.getenv("file_prefix")
 
 s3 = boto3.client("s3")
 
@@ -22,26 +30,27 @@ TEMP_DIR = os.getenv("TEMP_DIR")
 
 class c:
     
-    def a(self,event,context):
+    #def a(self,event,context):
         
-        print(" ------------------------------------- ")
-        print("Starting the File transfer process ..")
-        global key
-        print("Extracting the uploaded file name from the s3 Bucket ..")
+    #    print(" ------------------------------------- ")
+    #    print("Starting the File transfer process ..")
+    #    global key
+    #    print("Extracting the uploaded file name from the s3 Bucket ..")
         
-        bucket = event['Records'][0]['s3']['bucket']['name']
-        key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
-        response = s3.get_object(Bucket=bucket, Key=key)
+    #    bucket = event['Records'][0]['s3']['bucket']['name']
+    #    key = urllib.parse.unquote_plus(event['Records'][0]['s3']['object']['key'], encoding='utf-8')
+    #    response = s3.get_object(Bucket=bucket, Key=key)
         
-        print("The uploaded File name is: " + key)
-        print("The uploaded File content type is: " + response['ContentType'])
+    #    print("The uploaded File name is: " + key)
+    #    print("The uploaded File content type is: " + response['ContentType'])
         
-        return response['ContentType']
-        return key
+    #    return response['ContentType']
+    #    return key
     
 
     def b(self,context):
         
+        key = FILE_PREFIX+File_PREFIX_DATE+FILE_SUFFIX
         print(" ------------------------------------- ")
         print("File name recieved, starting the file download to lambda temp folder ..")
         
@@ -91,12 +100,15 @@ class c:
         print(" ------------------------------------- ")
         print("[SUCCESS]", dt, "Files are copied to the EFS File system, Process is complete ..!")
         print(" ------------------------------------- ")
-
-        return {"statusCode": 200}  
         
     
 def lambda_handler(event, context):
     
     x = c()
-    x.a(event,context)
+    #x.a(event,context)
     x.b(event)
+    
+    return {
+        'statusCode': 200,
+        'body': json.dumps('EFS File Transfer Function is successful !')
+    }
